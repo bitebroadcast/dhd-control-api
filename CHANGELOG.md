@@ -1,5 +1,11 @@
 # dhd-control-api
 
+## 0.0.4
+
+### Patch Changes
+
+- d6a4669: release script
+
 ## 0.0.3
 
 ### Patch Changes
