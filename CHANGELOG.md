@@ -1,5 +1,12 @@
 # dhd-control-api
 
+## 0.0.5
+
+### Patch Changes
+
+- de714d9: dont run ci twice on release
+- 144b355: initial readme
+
 ## 0.0.4
 
 ### Patch Changes
