@@ -24,16 +24,25 @@
     "dist"
   ],
   "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
   "scripts": {
-    "build": "tsc",
-    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports",
+    "build": "tsup",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm"
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "lint": "tsc"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
     "prettier": "^3.3.3",
+    "tsup": "^8.3.5",
     "typescript": "^5.6.3"
   }
 }
