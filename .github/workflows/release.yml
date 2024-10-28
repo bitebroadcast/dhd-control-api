@@ -1,9 +1,10 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -15,7 +16,7 @@ jobs:
   release:
     name: Release
     # Do not run this job on forks
-    if: ${{ github.repository == 'bitebroadcast/dhd-control-api' }}
+    if: ${{ github.repository == 'bitebroadcast/dhd-control-api' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +40,8 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: pnpm run release
+          commit: 'ci: Version packages'
+          title: 'ci: Version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
