@@ -25,9 +25,12 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "ci": "pnpm run build"
+    "ci": "pnpm run build && pnpm run check-format",
+    "format": "prettier --write .",
+    "check-format": "prettier --check ."
   },
   "devDependencies": {
+    "prettier": "^3.3.3",
     "typescript": "^5.6.3"
   }
 }
