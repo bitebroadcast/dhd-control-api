@@ -1,6 +1,6 @@
 {
   "name": "dhd-control-api",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Typescript library for the DHD Control API",
   "license": "MIT",
   "main": "dist/index.js",
