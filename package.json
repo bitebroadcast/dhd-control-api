@@ -33,16 +33,19 @@
   },
   "scripts": {
     "build": "tsup",
-    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint && pnpm run test",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
-    "lint": "tsc"
+    "lint": "tsc",
+    "test": "vitest run",
+    "dev": "vitest"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
     "prettier": "^3.3.3",
     "tsup": "^8.3.5",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
   }
 }
