@@ -1,1 +1,1 @@
-export { hello } from './utils';
+export { hello, add } from './utils';
