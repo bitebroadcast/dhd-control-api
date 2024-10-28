@@ -1,0 +1,26 @@
+{
+  "name": "dhd-control-api",
+  "version": "0.0.1",
+  "description": "Typescript library for the DHD Control API",
+  "license": "MIT",
+  "keywords": [
+    "dhd",
+    "audio",
+    "control",
+    "api",
+    "ecp"
+  ],
+  "homepage": "https://github.com/bitebroadcast/dhd-control-api",
+  "bugs": {
+    "url": "https://github.com/bitebroadcast/dhd-control-api/issues"
+  },
+  "author": "Rein van Haaren <rein.vanhaaren@bitebroadcast.com> (https://www.bitebroadcast.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitebroadcast/dhd-control-api.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module"
+}
