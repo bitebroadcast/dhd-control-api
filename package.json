@@ -42,7 +42,7 @@
     "test": "vitest run",
     "dev": "vitest",
     "local-release": "changeset version && changeset publish",
-    "prepublishOnly": "pnpm run ci"
+    "release": "pnpm run ci && changeset publish"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
