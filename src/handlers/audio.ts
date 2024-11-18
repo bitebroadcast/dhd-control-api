@@ -20,16 +20,17 @@ export const audioLevelResponse = z.object({
   _correlation: z.number(),
 });
 
-export const audioSelectorRequest = z.object({
-  selectorID: z.number(),
-});
-
-export const audioSelectorResponse = z.object({
+const audioSelectorImmutable = z.object({
   _name: z.string(),
   _sourcelist: z.string(),
+});
+
+const audioSelectorMutable = z.object({
   left: audioSource,
   right: audioSource,
 });
+
+const audioSelector = audioSelectorImmutable.merge(audioSelectorMutable);
 
 // Handlers
 
@@ -39,30 +40,19 @@ export const audioGetHandlers = {
     responseSchema: audioLevelResponse,
   },
   ['/audio/selectors/selectors/{selectorID}']: {
-    paramsSchema: audioSelectorRequest,
-    responseSchema: audioSelectorResponse,
+    paramsSchema: z.object({
+      selectorID: z.number(),
+    }),
+    responseSchema: audioSelector,
   },
 } satisfies DHDGetHandlers;
 
 export const audioSetHandlers = {
   ['/audio/selectors/selectors/{selectorID}']: {
-    paramsSchema: audioSelectorRequest,
-    responseSchema: audioSource,
-    payloadSchema: z
-      .object({
-        left: audioSource,
-        right: audioSource,
-      })
-      .partial(),
-  },
-  ['/audio/selectors/selectors/{selectorID}/left']: {
-    paramsSchema: audioSelectorRequest,
-    responseSchema: audioSource,
-    payloadSchema: audioSource,
-  },
-  ['/audio/selectors/selectors/{selectorID}/right']: {
-    paramsSchema: audioSelectorRequest,
-    responseSchema: audioSource,
-    payloadSchema: audioSource,
+    paramsSchema: z.object({
+      selectorID: z.number(),
+    }),
+    responseSchema: audioSelectorMutable.partial(),
+    payloadSchema: audioSelectorMutable.partial(),
   },
 } satisfies DHDSetHandlers;
