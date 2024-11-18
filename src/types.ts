@@ -42,5 +42,3 @@ export type DHDRESTQuery = (DHDGetQuery | DHDSetQuery) & {
 };
 
 export type ResponseHandler = (response: any) => void;
-
-export type EventHandler = (...args: any[]) => void;

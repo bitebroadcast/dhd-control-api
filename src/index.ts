@@ -8,7 +8,6 @@ import type {
   DHDPayload,
   DHDRESTQuery,
   DHDWebSocketQuery,
-  EventHandler,
   ResponseHandler,
 } from './types';
 import { dhdWebSocketResponse } from './schemas';
@@ -62,6 +61,13 @@ const dhdOptionsSchema = z.object({
 export type DHDOptionsInput = z.input<typeof dhdOptionsSchema>;
 export type DHDOptionsOutput = z.infer<typeof dhdOptionsSchema>;
 
+type DHDEvents = {
+  connect: () => void;
+  disconnect: () => void;
+  error: (error: Error) => void;
+  reconnect: () => void;
+};
+
 export class DHD {
   private options: DHDOptionsOutput;
 
@@ -74,7 +80,7 @@ export class DHD {
     { resolve: ResponseHandler; reject: ResponseHandler }
   > = new Map();
 
-  private eventHandlers: Map<string, EventHandler[]> = new Map();
+  private eventHandlers: Map<string, DHDEvents[keyof DHDEvents][]> = new Map();
 
   constructor(options: DHDOptionsInput) {
     this.options = dhdOptionsSchema.parse(options);
@@ -84,7 +90,10 @@ export class DHD {
     }
   }
 
-  public on = (event: string, handler: EventHandler) => {
+  public on = <Event extends keyof DHDEvents, Handler extends DHDEvents[Event]>(
+    event: Event,
+    handler: (...args: Parameters<Handler>) => ReturnType<Handler>,
+  ) => {
     if (!this.eventHandlers.has(event)) {
       this.eventHandlers.set(event, []);
     }
@@ -92,7 +101,13 @@ export class DHD {
     this.eventHandlers.get(event)!.push(handler);
   };
 
-  public off = (event: string, handler: EventHandler) => {
+  public off = <
+    Event extends keyof DHDEvents,
+    Handler extends DHDEvents[Event],
+  >(
+    event: Event,
+    handler: (...args: Parameters<Handler>) => ReturnType<Handler>,
+  ) => {
     if (!this.eventHandlers.has(event)) {
       return;
     }
@@ -107,12 +122,18 @@ export class DHD {
     }
   };
 
-  private emit = (event: string, ...args: unknown[]) => {
+  private emit = <
+    Event extends keyof DHDEvents,
+    Handler extends DHDEvents[Event],
+  >(
+    event: Event,
+    ...args: Parameters<Handler>
+  ) => {
     const eventHandlers = this.eventHandlers.get(event);
 
     if (eventHandlers) {
       for (const handler of eventHandlers) {
-        handler(...args);
+        (handler as (...args: any[]) => void)(...args);
       }
     }
   };
