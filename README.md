@@ -6,7 +6,9 @@
 
 ### _**Warning:** This library is still under active development and not yet ready for production use. The API is subject to change._
 
-This TypeScript library provides a type-safe interface to DHD audio cores via the new [DHD Control API](https://developer.dhd.audio/docs/API/control-api/), supported in firmware version 10.3 and above.
+This TypeScript library provides a type-safe interface to DHD audio cores via the new [DHD Control API](https://developer.dhd.audio/docs/API/control-api/), supported in firmware version 10.3 and above. Before using this library, please read the [API usage disclaimer](https://developer.dhd.audio/docs/api/license-agreement/) in the DHD developer documentation.
+
+Please refer to the [official documentation](https://developer.dhd.audio/docs/API/control-api/) for more information on the API.
 
 ## Installation
 
