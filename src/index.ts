@@ -4,7 +4,14 @@ import { dhdHandlers, type DHDHandlers } from './handlers';
 
 import { log } from './log';
 import { assertNever } from './utils';
-import type { DHDPayload, DHDRESTQuery } from './types';
+import type {
+  DHDPayload,
+  DHDRESTQuery,
+  DHDWebSocketQuery,
+  EventHandler,
+  ResponseHandler,
+} from './types';
+import { dhdWebSocketResponse } from './schemas';
 
 const dhdOptionsSchema = z.object({
   /**
@@ -62,6 +69,13 @@ export class DHD {
 
   private reconnectTimeout: NodeJS.Timeout | null = null;
 
+  private requestMap: Map<
+    string,
+    { resolve: ResponseHandler; reject: ResponseHandler }
+  > = new Map();
+
+  private eventHandlers: Map<string, EventHandler[]> = new Map();
+
   constructor(options: DHDOptionsInput) {
     this.options = dhdOptionsSchema.parse(options);
 
@@ -69,6 +83,39 @@ export class DHD {
       this.connect();
     }
   }
+
+  public on = (event: string, handler: EventHandler) => {
+    if (!this.eventHandlers.has(event)) {
+      this.eventHandlers.set(event, []);
+    }
+
+    this.eventHandlers.get(event)!.push(handler);
+  };
+
+  public off = (event: string, handler: EventHandler) => {
+    if (!this.eventHandlers.has(event)) {
+      return;
+    }
+
+    const eventHandlers = this.eventHandlers.get(event);
+
+    if (eventHandlers) {
+      this.eventHandlers.set(
+        event,
+        eventHandlers.filter((h) => h !== handler),
+      );
+    }
+  };
+
+  private emit = (event: string, ...args: unknown[]) => {
+    const eventHandlers = this.eventHandlers.get(event);
+
+    if (eventHandlers) {
+      for (const handler of eventHandlers) {
+        handler(...args);
+      }
+    }
+  };
 
   /**
    * Connect to the DHD device via WebSocket. This method is called automatically
@@ -97,8 +144,12 @@ export class DHD {
 
     this.socket = new WebSocket(url);
 
-    this.socket.onopen = () => {
+    this.socket.onopen = async () => {
       log.info('Connection open');
+
+      await this.authenticateWebSocket();
+
+      this.emit('connect');
 
       this.clearReconnectTimeout();
     };
@@ -110,6 +161,8 @@ export class DHD {
         log.error('Connection closed unexpectedly');
       }
 
+      this.emit('disconnect');
+
       if (this.options.autoReconnect !== false) {
         this.reconnect();
       }
@@ -118,6 +171,8 @@ export class DHD {
     this.socket.onerror = (error) => {
       log.error('Connection error');
       log.error(error);
+
+      this.emit('error', new Error((error as ErrorEvent).message));
 
       if (this.options.autoReconnect !== false) {
         this.reconnect();
@@ -132,6 +187,8 @@ export class DHD {
       this.reconnectTimeout = setTimeout(() => {
         log.warn('Reconnecting...');
 
+        this.emit('reconnect');
+
         this.connect();
       }, 1000);
     }
@@ -144,11 +201,50 @@ export class DHD {
     }
   };
 
+  private authenticateWebSocket = async () => {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      log.error('WebSocket connection is not open');
+      return;
+    }
+
+    await this.webSocketRequest({
+      requestPayload: {
+        method: 'auth',
+        token: this.options.token,
+      },
+    });
+  };
+
   private handleMessage = ({ data }: MessageEvent) => {
     try {
-      const message = JSON.parse(data);
+      const message = dhdWebSocketResponse.parse(JSON.parse(data));
 
-      console.log(message);
+      switch (message.method) {
+        case 'auth':
+        case 'get':
+        case 'set': {
+          if (this.requestMap.has(message.msgID)) {
+            const promise = this.requestMap.get(message.msgID);
+
+            if (message.method !== 'auth' && message.success !== true) {
+              promise?.reject(
+                new Error(message.error?.message ?? 'Unknown error'),
+              );
+            } else {
+              promise?.resolve(message);
+            }
+
+            this.requestMap.delete(message.msgID);
+          }
+
+          break;
+        }
+
+        default: {
+          assertNever(message);
+          break;
+        }
+      }
     } catch (error) {
       log.error('Failed to parse message');
       log.error(error);
@@ -232,7 +328,7 @@ export class DHD {
 
     switch (this.options.connectionType) {
       case 'websocket': {
-        return responseSchema.parse('response');
+        return this.webSocketRequest({ requestPayload });
       }
 
       case 'rest': {
@@ -252,7 +348,36 @@ export class DHD {
     }
   };
 
-  private webSocketRequest = async () => {};
+  private generateMsgID = () => {
+    return Math.random().toString(35).slice(2, 7);
+  };
+
+  private webSocketRequest = async ({
+    requestPayload,
+  }: {
+    requestPayload: DHDWebSocketQuery;
+  }) => {
+    return new Promise((resolve, reject) => {
+      const msgID = this.generateMsgID();
+
+      this.requestMap.set(msgID, { resolve, reject });
+
+      if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+        log.error('WebSocket connection is not open');
+
+        reject(new Error('WebSocket connection is not open'));
+      }
+
+      this.socket?.send(JSON.stringify({ msgID, ...requestPayload }));
+
+      setTimeout(() => {
+        if (this.requestMap.has(msgID)) {
+          this.requestMap.delete(msgID);
+          reject(new Error('Request timed out'));
+        }
+      }, 5 * 1000);
+    });
+  };
 
   private fetchRequest = async ({
     requestPayload,

@@ -19,15 +19,28 @@ type DHDSetHandler = {
 
 export type DHDSetHandlers = Record<string, DHDSetHandler>;
 
-export type DHDRESTQuery =
-  | {
-      token: string;
-      method: 'get';
-      path: string;
-    }
-  | {
-      token: string;
-      method: 'set';
-      path: string;
-      payload: DHDPayload;
-    };
+export type DHDGetQuery = {
+  method: 'get';
+  path: string;
+};
+
+export type DHDSetQuery = {
+  method: 'set';
+  path: string;
+  payload: DHDPayload;
+};
+
+export type DHDAuthQuery = {
+  method: 'auth';
+  token: string;
+};
+
+export type DHDWebSocketQuery = DHDGetQuery | DHDSetQuery | DHDAuthQuery;
+
+export type DHDRESTQuery = (DHDGetQuery | DHDSetQuery) & {
+  token: string;
+};
+
+export type ResponseHandler = (response: any) => void;
+
+export type EventHandler = (...args: any[]) => void;
