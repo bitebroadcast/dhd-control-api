@@ -4,6 +4,7 @@ import { dhdHandlers, type DHDHandlers } from './handlers';
 
 import { log } from './log';
 import { assertNever } from './utils';
+import type { DHDPayload, DHDRESTQuery } from './types';
 
 const dhdOptionsSchema = z.object({
   /**
@@ -53,19 +54,6 @@ const dhdOptionsSchema = z.object({
 
 export type DHDOptionsInput = z.input<typeof dhdOptionsSchema>;
 export type DHDOptionsOutput = z.infer<typeof dhdOptionsSchema>;
-
-export type DHDRESTQuery =
-  | {
-      token: string;
-      method: 'get';
-      path: string;
-    }
-  | {
-      token: string;
-      method: 'set';
-      path: string;
-      payload: string | number | boolean;
-    };
 
 export class DHD {
   private options: DHDOptionsOutput;
@@ -220,7 +208,7 @@ export class DHD {
     path: string;
     params: Record<string, string | number | boolean>;
     responseSchema: ZodSchema;
-    payload?: string | number | boolean;
+    payload?: DHDPayload;
   }) => {
     let pathWithParams = path;
 
@@ -263,6 +251,8 @@ export class DHD {
       }
     }
   };
+
+  private webSocketRequest = async () => {};
 
   private fetchRequest = async ({
     requestPayload,

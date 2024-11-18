@@ -45,7 +45,22 @@ export const audioGetHandlers = {
 } satisfies DHDGetHandlers;
 
 export const audioSetHandlers = {
+  ['/audio/selectors/selectors/{selectorID}']: {
+    paramsSchema: audioSelectorRequest,
+    responseSchema: audioSource,
+    payloadSchema: z
+      .object({
+        left: audioSource,
+        right: audioSource,
+      })
+      .partial(),
+  },
   ['/audio/selectors/selectors/{selectorID}/left']: {
+    paramsSchema: audioSelectorRequest,
+    responseSchema: audioSource,
+    payloadSchema: audioSource,
+  },
+  ['/audio/selectors/selectors/{selectorID}/right']: {
     paramsSchema: audioSelectorRequest,
     responseSchema: audioSource,
     payloadSchema: audioSource,
