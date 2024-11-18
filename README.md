@@ -16,6 +16,14 @@ This library is available on [npm](npmjs.com/package/dhd-control-api). Install i
 pnpm add dhd-control-api
 ```
 
+## Debug logging
+
+This library uses the [debug](https://www.npmjs.com/package/debug) package for logging. To enable debug logging, set the `DEBUG` environment variable to `dhd-control-api:*`:
+
+```sh
+DEBUG=dhd-control-api:* node my-app.js
+```
+
 ---
 
 _BITE Broadcast and this library are not affiliated with or endorsed by DHD Audio GmbH. This is an independent project._
