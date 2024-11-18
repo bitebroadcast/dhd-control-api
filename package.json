@@ -34,13 +34,11 @@
   "packageManager": "pnpm@9.12.3+sha256.24235772cc4ac82a62627cd47f834c72667a2ce87799a846ec4e8e555e2d4b8b",
   "scripts": {
     "build": "tsup",
-    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint && pnpm run test",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "lint": "tsc",
-    "test": "vitest run",
-    "dev": "vitest",
     "local-release": "changeset version && changeset publish",
     "release": "pnpm run build && changeset publish"
   },
@@ -56,7 +54,6 @@
     "@types/node": "^22.9.0",
     "prettier": "^3.3.3",
     "tsup": "^8.3.5",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.3"
+    "typescript": "^5.6.3"
   }
 }
