@@ -45,7 +45,8 @@
     "release": "pnpm run build && changeset publish"
   },
   "dependencies": {
-    "debug": "^4.3.7"
+    "debug": "^4.3.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
