@@ -1,5 +1,9 @@
 import { z, type ZodSchema } from 'zod';
+
+import { dhdHandlers, type DHDHandlers } from './handlers';
+
 import { log } from './log';
+import { assertNever } from './utils';
 
 const dhdOptionsSchema = z.object({
   /**
@@ -49,6 +53,19 @@ const dhdOptionsSchema = z.object({
 
 export type DHDOptionsInput = z.input<typeof dhdOptionsSchema>;
 export type DHDOptionsOutput = z.infer<typeof dhdOptionsSchema>;
+
+export type DHDRESTQuery =
+  | {
+      token: string;
+      method: 'get';
+      path: string;
+    }
+  | {
+      token: string;
+      method: 'set';
+      path: string;
+      payload: string | number | boolean;
+    };
 
 export class DHD {
   private options: DHDOptionsOutput;
@@ -119,9 +136,7 @@ export class DHD {
       }
     };
 
-    this.socket.onmessage = (message) => {
-      log.info(message.data);
-    };
+    this.socket.onmessage = this.handleMessage;
   };
 
   private reconnect = () => {
@@ -138,6 +153,152 @@ export class DHD {
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
+    }
+  };
+
+  private handleMessage = ({ data }: MessageEvent) => {
+    try {
+      const message = JSON.parse(data);
+
+      console.log(message);
+    } catch (error) {
+      log.error('Failed to parse message');
+      log.error(error);
+    }
+  };
+
+  public get = async <
+    Path extends keyof DHDHandlers['get'],
+    Response extends z.infer<DHDHandlers['get'][Path]['responseSchema']>,
+  >(
+    path: Path,
+    {
+      params,
+    }: {
+      params: z.infer<DHDHandlers['get'][Path]['paramsSchema']>;
+    },
+  ) => {
+    const { paramsSchema, responseSchema } = dhdHandlers.get[path];
+
+    return this.dhdRequest({
+      path,
+      params: paramsSchema.parse(params),
+      responseSchema,
+    }) as unknown as Response;
+  };
+
+  public set = async <
+    Path extends keyof DHDHandlers['set'],
+    Response extends z.infer<DHDHandlers['set'][Path]['responseSchema']>,
+  >(
+    path: Path,
+    {
+      params,
+      payload,
+    }: {
+      params: z.infer<DHDHandlers['set'][Path]['paramsSchema']>;
+      payload: z.infer<DHDHandlers['set'][Path]['payloadSchema']>;
+    },
+  ) => {
+    const { paramsSchema, responseSchema, payloadSchema } =
+      dhdHandlers.set[path];
+
+    return this.dhdRequest({
+      path,
+      params: paramsSchema.parse(params),
+      responseSchema,
+      payload: payloadSchema.parse(payload),
+    }) as unknown as Response;
+  };
+
+  private dhdRequest = async ({
+    path,
+    params,
+    responseSchema,
+    payload,
+  }: {
+    path: string;
+    params: Record<string, string | number | boolean>;
+    responseSchema: ZodSchema;
+    payload?: string | number | boolean;
+  }) => {
+    let pathWithParams = path;
+
+    for (const [key, value] of Object.entries(params)) {
+      pathWithParams = pathWithParams.replace(`{${key}}`, `${value}`);
+    }
+
+    log.info(`GET ${pathWithParams} via ${this.options.connectionType}`);
+
+    const requestPayload =
+      typeof payload === 'undefined'
+        ? ({
+            method: 'get',
+            path: pathWithParams,
+          } as const)
+        : ({
+            method: 'set',
+            path: pathWithParams,
+            payload,
+          } as const);
+
+    switch (this.options.connectionType) {
+      case 'websocket': {
+        return responseSchema.parse('response');
+      }
+
+      case 'rest': {
+        const response = await this.fetchRequest({
+          requestPayload: {
+            ...requestPayload,
+            token: this.options.token,
+          },
+        });
+
+        return responseSchema.parse(response);
+      }
+
+      default: {
+        return assertNever(this.options.connectionType);
+      }
+    }
+  };
+
+  private fetchRequest = async ({
+    requestPayload,
+  }: {
+    requestPayload: DHDRESTQuery;
+  }) => {
+    try {
+      const protocol = this.options.secure ? 'https' : 'http';
+      const url = new URL(
+        `/api/rest`,
+        `${protocol}://${this.options.host}:3000`,
+      );
+
+      const response = await fetch(url.toString(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestPayload),
+        signal: AbortSignal.timeout(5000),
+      });
+
+      if (!response.ok) {
+        // TODO: Handle error and emit via handler
+        log.error('Failed to fetch data');
+        log.error(response.statusText);
+
+        return;
+      }
+
+      const json = await response.json();
+
+      return json;
+    } catch (error) {
+      log.error('Failed to fetch data');
+      log.error(error);
     }
   };
 }
