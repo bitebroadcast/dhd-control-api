@@ -1,59 +1,64 @@
+import { z, type ZodSchema } from 'zod';
 import { log } from './log';
 
-export type DHDOptions = {
+const dhdOptionsSchema = z.object({
   /**
    * The hostname or IP address of the DHD device.
    *
    * @example 10.0.0.1
    * @example dhd.local
    */
-  host: string;
+  host: z.string(),
+
+  /**
+   * The token used to authenticate with the DHD device.
+   */
+  token: z.string(),
 
   /**
    * The type of connection to use when connecting to the DHD device. Please
    * note that the connection via REST has a rate limit of 1 request per second.
    *
-   * @default websocket
+   * @default 'websocket'
    */
-  connectionType?: 'websocket' | 'rest';
+  connectionType: z
+    .union([z.literal('websocket'), z.literal('rest')])
+    .default('websocket'),
 
   /**
    * Connect to the DHD device using a secure WebSocket connection.
    *
    * @default false
    */
-  secure?: boolean;
+  secure: z.boolean().default(false),
 
   /**
    * Connect to the DHD device automatically when the instance is created.
    *
    * @default true
    */
-  autoConnect?: boolean;
+  autoConnect: z.boolean().default(true),
 
   /**
    * Automatically reconnect to the DHD device if the connection is lost.
    *
    * @default true
    */
-  autoReconnect?: boolean;
-};
+  autoReconnect: z.boolean().default(true),
+});
+
+export type DHDOptionsInput = z.input<typeof dhdOptionsSchema>;
+export type DHDOptionsOutput = z.infer<typeof dhdOptionsSchema>;
 
 export class DHD {
-  private options: Required<DHDOptions>;
+  private options: DHDOptionsOutput;
 
   private socket: WebSocket | null = null;
 
   private reconnectTimeout: NodeJS.Timeout | null = null;
 
-  constructor(options: DHDOptions) {
-    this.options = {
-      connectionType: 'websocket',
-      secure: false,
-      autoConnect: true,
-      autoReconnect: true,
-      ...options,
-    };
+  constructor(options: DHDOptionsInput) {
+    this.options = dhdOptionsSchema.parse(options);
 
     if (this.options.autoConnect !== false) {
       this.connect();
