@@ -1,6 +1,6 @@
 import { z, type ZodSchema } from 'zod';
 
-import { dhdHandlers, type DHDHandlers } from './handlers';
+import { dhdHandlers, type DHDHandlers } from './api';
 
 import { log } from './log';
 import { assertNever } from './utils';
