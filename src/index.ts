@@ -295,7 +295,6 @@ export class DHD {
 
   public set = async <
     Path extends keyof DHDHandlers['set'],
-    Response extends z.infer<DHDHandlers['set'][Path]['responseSchema']>,
     Params extends z.infer<DHDHandlers['set'][Path]['paramsSchema']>,
     Payload extends z.infer<DHDHandlers['set'][Path]['payloadSchema']>,
   >(
@@ -316,14 +315,7 @@ export class DHD {
       params: paramsSchema.parse(params),
       responseSchema,
       payload: payloadSchema.parse(payload),
-      // TODO: Return type should be required payload keys of response schema
-      // Type is too wide now
-      //
-      // Example with payload { left: '430' }
-      //
-      // Current: { left?: string, right?: string }
-      // Expected: { left: string }
-    }) as unknown as Response;
+    }) as unknown as Payload;
   };
 
   private dhdRequest = async ({
