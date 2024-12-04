@@ -1,3 +1,3 @@
-export const hello = ({ name }: { name: string }) => `Hello, ${name}!`;
-
-export const add = (a: number, b: number) => a + b;
+export const assertNever = (value: never): never => {
+  throw new Error(`Unexpected value: ${value}`);
+};
