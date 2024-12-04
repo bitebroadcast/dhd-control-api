@@ -272,6 +272,15 @@ export class DHD {
     }
   };
 
+  /**
+   * Get data from the DHD device.
+   *
+   * @example
+   * await dhd.get("/audio/levels/{levelDetectID}", {
+   *   params: { levelDetectID: 1 },
+   * });
+   *
+   */
   public get = async <
     Path extends keyof DHDHandlers['get'],
     Response extends z.infer<DHDHandlers['get'][Path]['responseSchema']>,
@@ -293,6 +302,16 @@ export class DHD {
     }) as unknown as Response;
   };
 
+  /**
+   * Set data in the DHD device.
+   *
+   * @example
+   * await dhd.set("/audio/selectors/selectors/{selectorID}", {
+   *   params: { selectorID: 1 },
+   *   payload: { left: "40" },
+   * });
+   *
+   */
   public set = async <
     Path extends keyof DHDHandlers['set'],
     Params extends z.infer<DHDHandlers['set'][Path]['paramsSchema']>,
