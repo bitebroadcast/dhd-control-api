@@ -1,5 +1,11 @@
 # dhd-control-api
 
+## 0.1.0
+
+### Minor Changes
+
+- 0d0dcdf: Initial base functionality
+
 ## 0.0.5
 
 ### Patch Changes
