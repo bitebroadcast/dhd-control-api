@@ -6,7 +6,9 @@ const dhdWebSocketAuthResponse = z.object({
   token: z.string(),
 });
 
-const dhdWebSocketBaseResponse = <Method extends string>(method: Method) =>
+const dhdWebSocketBaseResponse = <Method extends 'get' | 'set'>(
+  method: Method,
+) =>
   z.object({
     msgID: z.string(),
     method: z.literal(method),
