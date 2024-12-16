@@ -4,16 +4,16 @@ export type DHDPrimitive = string | number | boolean;
 export type DHDPrimitives = Record<string, DHDPrimitive>;
 export type DHDPayload = DHDPrimitive | DHDPrimitives;
 
-type DHDGetHandler = {
-  paramsSchema: z.ZodSchema;
+type DHDBaseHandler = {
+  paramsSchema: z.ZodSchema | null;
   responseSchema: z.ZodSchema;
 };
 
+type DHDGetHandler = DHDBaseHandler;
+
 export type DHDGetHandlers = Record<string, DHDGetHandler>;
 
-type DHDSetHandler = {
-  paramsSchema: z.ZodSchema;
-  responseSchema: z.ZodSchema;
+type DHDSetHandler = DHDBaseHandler & {
   payloadSchema: z.ZodSchema;
 };
 

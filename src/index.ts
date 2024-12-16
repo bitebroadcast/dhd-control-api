@@ -284,20 +284,22 @@ export class DHD {
   public get = async <
     Path extends keyof DHDHandlers['get'],
     Response extends z.infer<DHDHandlers['get'][Path]['responseSchema']>,
-    Params extends z.infer<DHDHandlers['get'][Path]['paramsSchema']>,
   >(
-    path: Path,
-    {
-      params,
-    }: {
-      params: Params;
-    },
+    ...[
+      path,
+      { params } = { params: undefined },
+    ]: DHDHandlers['get'][Path]['paramsSchema'] extends z.ZodSchema
+      ? [
+          path: Path,
+          { params: z.infer<DHDHandlers['get'][Path]['paramsSchema']> },
+        ]
+      : [path: Path]
   ) => {
     const { paramsSchema, responseSchema } = dhdHandlers.get[path];
 
     return this.dhdRequest({
       path,
-      params: paramsSchema.parse(params),
+      params: paramsSchema?.parse(params),
       responseSchema,
     }) as unknown as Response;
   };
@@ -314,24 +316,35 @@ export class DHD {
    */
   public set = async <
     Path extends keyof DHDHandlers['set'],
-    Params extends z.infer<DHDHandlers['set'][Path]['paramsSchema']>,
     Payload extends z.infer<DHDHandlers['set'][Path]['payloadSchema']>,
   >(
-    path: Path,
-    {
-      params,
-      payload,
-    }: {
-      params: Params;
-      payload: Payload;
-    },
+    ...[
+      path,
+      { params, payload },
+    ]: DHDHandlers['set'][Path]['paramsSchema'] extends z.ZodSchema
+      ? [
+          path: Path,
+          {
+            params: z.infer<DHDHandlers['set'][Path]['paramsSchema']>;
+            payload: Payload;
+          },
+        ]
+      : [
+          path: Path,
+          {
+            // TODO: Params should not be visible in object intellisense of set
+            // function when paramsSchema is null
+            params?: never;
+            payload: Payload;
+          },
+        ]
   ) => {
     const { paramsSchema, responseSchema, payloadSchema } =
       dhdHandlers.set[path];
 
     return this.dhdRequest({
       path,
-      params: paramsSchema.parse(params),
+      params: paramsSchema?.parse(params),
       responseSchema,
       payload: payloadSchema.parse(payload),
     }) as unknown as Payload;
@@ -344,14 +357,16 @@ export class DHD {
     payload,
   }: {
     path: string;
-    params: Record<string, string | number | boolean>;
+    params?: Record<string, string | number | boolean>;
     responseSchema: ZodSchema;
     payload?: DHDPayload;
   }) => {
     let pathWithParams = path;
 
-    for (const [key, value] of Object.entries(params)) {
-      pathWithParams = pathWithParams.replace(`{${key}}`, `${value}`);
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        pathWithParams = pathWithParams.replace(`{${key}}`, `${value}`);
+      }
     }
 
     log.info(`GET ${pathWithParams} via ${this.options.connectionType}`);
