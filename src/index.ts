@@ -415,7 +415,7 @@ export class DHD {
       setTimeout(() => {
         if (this.requestMap.has(msgID)) {
           this.requestMap.delete(msgID);
-          reject(new Error('Request timed out'));
+          reject(new Error(`Request ${msgID} timed out`));
         }
       }, 5 * 1000);
     });
