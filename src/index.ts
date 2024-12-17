@@ -1,16 +1,17 @@
-import { z, type ZodSchema, ZodString } from 'zod';
+import type { ZodSchema } from 'zod';
+import { z, ZodString } from 'zod';
 
-import { dhdHandlers, type DHDHandlers } from './api';
-
-import { log } from './log';
-import { assertNever } from './utils';
+import type { DHDHandlers } from './api';
 import type {
   DHDPayload,
   DHDRESTQuery,
   DHDWebSocketQuery,
   ResponseHandler,
 } from './types';
+import { dhdHandlers } from './api';
+import { log } from './log';
 import { dhdWebSocketResponse } from './schemas';
+import { assertNever } from './utils';
 
 const dhdOptionsSchema = z.object({
   /**
