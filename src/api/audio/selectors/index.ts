@@ -2,35 +2,27 @@ import { z } from 'zod';
 
 import type { DHDGetHandlers, DHDSetHandlers } from '@/types';
 
-const audioSource = z.string();
+import { numberedObject } from '@/utils';
 
-const audioSelectorImmutable = z.object({
-  _name: z.string(),
-  _sourcelist: z.string(),
+import {
+  audioSelectorsSelector,
+  audioSelectorsSelectorsGetHandlers,
+  audioSelectorsSelectorsSetHandlers,
+} from './selectors';
+
+const audioSelectors = z.object({
+  selectors: numberedObject(audioSelectorsSelector),
+  sourcelists: z.any(), // TODO: Implement sourcelists
 });
-
-export const audioSelectorMutable = z.object({
-  left: audioSource,
-  right: audioSource,
-});
-
-export const audioSelector = audioSelectorImmutable.merge(audioSelectorMutable);
 
 export const audioSelectorsGetHandlers = {
-  ['/audio/selectors/selectors/{selectorID}']: {
-    paramsSchema: z.object({
-      selectorID: z.number(),
-    }),
-    responseSchema: audioSelector,
+  ['/audio/selectors']: {
+    paramsSchema: null,
+    responseSchema: audioSelectors,
   },
+  ...audioSelectorsSelectorsGetHandlers,
 } satisfies DHDGetHandlers;
 
 export const audioSelectorsSetHandlers = {
-  ['/audio/selectors/selectors/{selectorID}']: {
-    paramsSchema: z.object({
-      selectorID: z.number(),
-    }),
-    responseSchema: audioSelectorMutable,
-    payloadSchema: audioSelectorMutable,
-  },
+  ...audioSelectorsSelectorsSetHandlers,
 } satisfies DHDSetHandlers;
