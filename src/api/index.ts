@@ -1,4 +1,4 @@
-import type { DHDGetHandlers, DHDSetHandlers } from '../types';
+import type { DHDGetHandlers, DHDSetHandlers } from '@/types';
 
 import { audioGetHandlers, audioSetHandlers } from './audio';
 import { generalGetHandlers } from './general';

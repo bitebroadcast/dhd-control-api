@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { DHDGetHandlers, DHDSetHandlers } from '../../types';
+import type { DHDGetHandlers, DHDSetHandlers } from '@/types';
 
 import { audioLevel } from './levels';
 import { audioSelector, audioSelectorMutable } from './selectors';

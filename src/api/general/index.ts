@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { DHDGetHandlers } from '../../types';
+import type { DHDGetHandlers } from '@/types';
 
 export const general = z.object({
   _api_version: z.string(),

@@ -12,6 +12,9 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noEmit": true,
-    "module": "Preserve"
+    "module": "Preserve",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }
