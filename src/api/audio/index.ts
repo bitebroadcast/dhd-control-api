@@ -25,7 +25,7 @@ export const audioSetHandlers = {
     paramsSchema: z.object({
       selectorID: z.number(),
     }),
-    responseSchema: audioSelectorMutable.partial(),
-    payloadSchema: audioSelectorMutable.partial(),
+    responseSchema: audioSelectorMutable,
+    payloadSchema: audioSelectorMutable,
   },
 } satisfies DHDSetHandlers;

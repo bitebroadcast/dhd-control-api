@@ -316,7 +316,7 @@ export class DHD {
    */
   public set = async <
     Path extends keyof DHDHandlers['set'],
-    Payload extends z.infer<DHDHandlers['set'][Path]['payloadSchema']>,
+    Payload extends Partial<z.infer<DHDHandlers['set'][Path]['payloadSchema']>>,
   >(
     ...[
       path,
@@ -345,8 +345,8 @@ export class DHD {
     return this.dhdRequest({
       path,
       params: paramsSchema?.parse(params),
-      responseSchema,
-      payload: payloadSchema.parse(payload),
+      responseSchema: responseSchema.partial(),
+      payload: payloadSchema.partial().parse(payload),
     }) as unknown as Payload;
   };
 
