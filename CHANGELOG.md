@@ -1,5 +1,16 @@
 # dhd-control-api
 
+## 0.2.0
+
+### Minor Changes
+
+- f66d61d: Audio api definitions added
+
+### Patch Changes
+
+- 6a8603b: Typescript path alias
+- e502190: Allow empty params on get and set requests, small fixes
+
 ## 0.1.0
 
 ### Minor Changes
