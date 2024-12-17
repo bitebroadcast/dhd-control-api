@@ -9,6 +9,7 @@ import {
   audioSelectorsSelectorsGetHandlers,
   audioSelectorsSelectorsSetHandlers,
 } from './selectors';
+import { audioSelectorsSourcelistsGetHandlers } from './sourcelists';
 
 const audioSelectors = z.object({
   selectors: numberedObject(audioSelectorsSelector),
@@ -21,6 +22,7 @@ export const audioSelectorsGetHandlers = {
     responseSchema: audioSelectors,
   },
   ...audioSelectorsSelectorsGetHandlers,
+  ...audioSelectorsSourcelistsGetHandlers,
 } satisfies DHDGetHandlers;
 
 export const audioSelectorsSetHandlers = {
