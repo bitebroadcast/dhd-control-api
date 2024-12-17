@@ -1,4 +1,4 @@
-import { z, type ZodSchema } from 'zod';
+import { z, type ZodSchema, ZodString } from 'zod';
 
 import { dhdHandlers, type DHDHandlers } from './api';
 
@@ -345,8 +345,16 @@ export class DHD {
     return this.dhdRequest({
       path,
       params: paramsSchema?.parse(params),
-      responseSchema: responseSchema.partial(),
-      payload: payloadSchema.partial().parse(payload),
+      // TODO: This is a dirty fix for string payloads. Check if there is
+      // a better way to handle this.
+      responseSchema:
+        responseSchema instanceof ZodString
+          ? responseSchema.optional()
+          : responseSchema.partial(),
+      payload: (payloadSchema instanceof ZodString
+        ? payloadSchema.optional()
+        : payloadSchema.partial()
+      ).parse(payload),
     }) as unknown as Payload;
   };
 
