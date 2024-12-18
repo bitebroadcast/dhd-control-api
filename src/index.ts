@@ -38,7 +38,7 @@ const dhdOptionsSchema = z.object({
     .default('websocket'),
 
   /**
-   * Connect to the DHD device using a secure WebSocket connection.
+   * Connect to the DHD device using a secure WebSocket connection or HTTPS-requests.
    *
    * @default false
    */
