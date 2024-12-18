@@ -21,11 +21,14 @@ export const audioMixersCleanfeeds = audioMixersCleanfeedsImmutable.merge(
 
 export const audioMixersCleanfeedsGetHandlers = {
   ['/audio/mixers/{mixerID}/cleanfeeds']: {
-    paramsSchema: null,
+    paramsSchema: z.object({
+      mixerID: z.number(),
+    }),
     responseSchema: numberedObject(audioMixersCleanfeeds),
   },
   ['/audio/mixers/{mixerID}/cleanfeeds/{cleanfeedID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       cleanfeedID: z.number(),
     }),
     responseSchema: audioMixersCleanfeeds,
@@ -35,6 +38,7 @@ export const audioMixersCleanfeedsGetHandlers = {
 export const audioMixersCleanfeedsSetHandlers = {
   ['/audio/mixers/{mixerID}/cleanfeeds/{cleanfeedID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       cleanfeedID: z.number(),
     }),
     payloadSchema: audioMixersCleanfeedsMutable,

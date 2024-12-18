@@ -56,11 +56,14 @@ export const audioMixersFadersFader = audioMixersFadersFaderImmutable.merge(
 
 export const audioMixersFadersFaderGetHandlers = {
   ['/audio/mixers/{mixerID}/faders']: {
-    paramsSchema: null,
+    paramsSchema: z.object({
+      mixerID: z.number(),
+    }),
     responseSchema: numberedObject(audioMixersFadersFader),
   },
   ['/audio/mixers/{mixerID}/faders/{faderID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       faderID: z.number(),
     }),
     responseSchema: audioMixersFadersFader,
@@ -72,6 +75,7 @@ export const audioMixersFadersFaderGetHandlers = {
 export const audioMixersFadersFaderSetHandlers = {
   ['/audio/mixers/{mixerID}/faders/{faderID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       faderID: z.number(),
     }),
     payloadSchema: audioMixersFadersFaderMutable,

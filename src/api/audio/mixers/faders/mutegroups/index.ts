@@ -10,7 +10,10 @@ export const audioMixersFadersFaderMutegroupsMutegroup =
 
 export const audioMixersFadersFaderMutegroupsGetHandlers = {
   ['/audio/mixers/{mixerID}/faders/{faderID}/mutegroups']: {
-    paramsSchema: null,
+    paramsSchema: z.object({
+      mixerID: z.number(),
+      faderID: z.number(),
+    }),
     responseSchema: numberedObject(audioMixersFadersFaderMutegroupsMutegroup),
   },
   ['/audio/mixers/{mixerID}/faders/{faderID}/mutegroups/{mutegroupID}']: {

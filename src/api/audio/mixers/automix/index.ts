@@ -21,12 +21,15 @@ export const audioMixersAutomix = audioMixersAutomixImmutable.merge(
 
 export const audioMixersAutomixGetHandlers = {
   ['/audio/mixers/{mixerID}/automix']: {
-    // TODO: Add paramsSchema and check all other paramsSchemas in the library
-    paramsSchema: null,
+    paramsSchema: z.object({
+      mixerID: z.number(),
+      automixID: z.number(),
+    }),
     responseSchema: numberedObject(audioMixersAutomix),
   },
   ['/audio/mixers/{mixerID}/automix/{automixID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       automixID: z.number(),
     }),
     responseSchema: audioMixersAutomix,
@@ -36,6 +39,7 @@ export const audioMixersAutomixGetHandlers = {
 export const audioMixersAutomixSetHandlers = {
   ['/audio/mixers/{mixerID}/automix/{automixID}']: {
     paramsSchema: z.object({
+      mixerID: z.number(),
       automixID: z.number(),
     }),
     payloadSchema: audioMixersAutomixMutable,
