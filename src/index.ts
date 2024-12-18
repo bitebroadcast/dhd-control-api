@@ -1,5 +1,5 @@
 import type { ZodSchema } from 'zod';
-import { z, ZodString } from 'zod';
+import { z, ZodBoolean, ZodString } from 'zod';
 
 import type { DHDHandlers } from './api';
 import type {
@@ -349,10 +349,12 @@ export class DHD {
       // TODO: This is a dirty fix for string payloads. Check if there is
       // a better way to handle this.
       responseSchema:
-        responseSchema instanceof ZodString
+        responseSchema instanceof ZodString ||
+        responseSchema instanceof ZodBoolean
           ? responseSchema.optional()
           : responseSchema.partial(),
-      payload: (payloadSchema instanceof ZodString
+      payload: (payloadSchema instanceof ZodString ||
+      payloadSchema instanceof ZodBoolean
         ? payloadSchema.optional()
         : payloadSchema.partial()
       ).parse(payload),
