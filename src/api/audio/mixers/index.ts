@@ -16,6 +16,9 @@ import {
   audioMixersFadersFaderSetHandlers,
 } from './faders';
 import {
+  audioMixersMutegroupsGetHandlers,
+} from './mutegroups';
+import {
   audioMixersOptionsGetHandlers,
   audioMixersOptionsSetHandlers,
 } from './options';
@@ -41,6 +44,7 @@ export const audioMixersGetHandlers = {
   ...audioMixersAutomixGetHandlers,
   ...audioMixersCleanfeedsGetHandlers,
   ...audioMixersFadersFaderGetHandlers,
+  ...audioMixersMutegroupsGetHandlers,
   ...audioMixersOptionsGetHandlers,
   ...audioMixersSourcelistGetHandlers,
 } satisfies DHDGetHandlers;
