@@ -3,6 +3,11 @@ import { z } from 'zod';
 import type { DHDGetHandlers, DHDSetHandlers } from '@/types';
 import { numberedObject } from '@/utils';
 
+import {
+  audioMixersAutomixGetHandlers,
+  audioMixersAutomixSetHandlers,
+} from './automix';
+
 const audioMixersMixerImmutable = z.object({
   _lastloadedsnap: z.string(),
 });
@@ -20,6 +25,9 @@ export const audioMixersGetHandlers = {
     }),
     responseSchema: audioMixersMixer,
   },
+  ...audioMixersAutomixGetHandlers,
 } satisfies DHDGetHandlers;
 
-export const audioMixersSetHandlers = {} satisfies DHDSetHandlers;
+export const audioMixersSetHandlers = {
+  ...audioMixersAutomixSetHandlers,
+} satisfies DHDSetHandlers;
