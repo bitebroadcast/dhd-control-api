@@ -21,6 +21,7 @@ const audioMixerAutomix = audioMixersAutomixImmutable.merge(
 
 export const audioMixersAutomixGetHandlers = {
   ['/audio/mixers/{mixerID}/automix']: {
+    // TODO: Add paramsSchema and check all other paramsSchemas in the library
     paramsSchema: null,
     responseSchema: numberedObject(audioMixerAutomix),
   },
