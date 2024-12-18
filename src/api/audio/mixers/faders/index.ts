@@ -26,6 +26,7 @@ const audioMixersFadersFaderImmutable = z.object({
   _readystate: z.boolean(),
   _usecleanfeed: z.number(),
   meter: audioMixersFadersFaderMeters,
+  mutegroups: numberedObject(audioMixersFadersFaderMutegroupsMutegroup),
   _paramlist: audioMixersFadersFaderParamlist,
   options: audioMixersFadersFaderOptions,
   params: audioMixersFadersFaderParamsParams,
@@ -47,7 +48,6 @@ const audioMixersFadersFaderMutable = z.object({
   sourceid: z.number(),
   vcagroup: z.number(),
   voice: z.boolean(),
-  mutegroups: numberedObject(audioMixersFadersFaderMutegroupsMutegroup),
 });
 
 export const audioMixersFadersFader = audioMixersFadersFaderImmutable.merge(
