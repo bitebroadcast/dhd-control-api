@@ -7,6 +7,10 @@ import {
   audioMixersAutomixGetHandlers,
   audioMixersAutomixSetHandlers,
 } from './automix';
+import {
+  audioMixersCleanfeedsGetHandlers,
+  audioMixersCleanfeedsSetHandlers,
+} from './cleanfeeds';
 
 const audioMixersMixerImmutable = z.object({
   _lastloadedsnap: z.string(),
@@ -26,8 +30,10 @@ export const audioMixersGetHandlers = {
     responseSchema: audioMixersMixer,
   },
   ...audioMixersAutomixGetHandlers,
+  ...audioMixersCleanfeedsGetHandlers,
 } satisfies DHDGetHandlers;
 
 export const audioMixersSetHandlers = {
   ...audioMixersAutomixSetHandlers,
+  ...audioMixersCleanfeedsSetHandlers,
 } satisfies DHDSetHandlers;
