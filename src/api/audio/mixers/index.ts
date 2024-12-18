@@ -19,6 +19,7 @@ import {
   audioMixersOptionsGetHandlers,
   audioMixersOptionsSetHandlers,
 } from './options';
+import { audioMixersSourcelistGetHandlers } from './sourcelist';
 
 const audioMixersMixerImmutable = z.object({
   _lastloadedsnap: z.string(),
@@ -41,6 +42,7 @@ export const audioMixersGetHandlers = {
   ...audioMixersCleanfeedsGetHandlers,
   ...audioMixersFadersFaderGetHandlers,
   ...audioMixersOptionsGetHandlers,
+  ...audioMixersSourcelistGetHandlers,
 } satisfies DHDGetHandlers;
 
 export const audioMixersSetHandlers = {
