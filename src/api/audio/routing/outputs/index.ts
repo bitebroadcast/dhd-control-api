@@ -16,7 +16,6 @@ export const audioRoutingOutputsGetHandlers = {
     paramsSchema: null,
     responseSchema: numberedObject(audioRoutingOutput),
   },
-  // TODO: Check if route below is existing. Does not exist in the documentation.
   ['/audio/routing/outputs/{outputID}']: {
     paramsSchema: z.object({
       outputID: z.number(),
