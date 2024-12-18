@@ -10,7 +10,7 @@ const audioMixersSourcelistItemImmutable = z.object({
 
 const audioMixersSourcelistItem = audioMixersSourcelistItemImmutable;
 
-const audioMixersSourcelist = z.array(audioMixersSourcelistItem);
+export const audioMixersSourcelist = z.array(audioMixersSourcelistItem);
 
 export const audioMixersSourcelistGetHandlers = {
   ['/audio/mixers/{mixerID}/sourcelist']: {

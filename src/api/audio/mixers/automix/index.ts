@@ -15,7 +15,7 @@ const audioMixersAutomixMutable = z.object({
   release: z.number(),
 });
 
-const audioMixerAutomix = audioMixersAutomixImmutable.merge(
+export const audioMixersAutomix = audioMixersAutomixImmutable.merge(
   audioMixersAutomixMutable,
 );
 
@@ -23,13 +23,13 @@ export const audioMixersAutomixGetHandlers = {
   ['/audio/mixers/{mixerID}/automix']: {
     // TODO: Add paramsSchema and check all other paramsSchemas in the library
     paramsSchema: null,
-    responseSchema: numberedObject(audioMixerAutomix),
+    responseSchema: numberedObject(audioMixersAutomix),
   },
   ['/audio/mixers/{mixerID}/automix/{automixID}']: {
     paramsSchema: z.object({
       automixID: z.number(),
     }),
-    responseSchema: audioMixerAutomix,
+    responseSchema: audioMixersAutomix,
   },
 } satisfies DHDGetHandlers;
 

@@ -4,28 +4,42 @@ import type { DHDGetHandlers, DHDSetHandlers } from '@/types';
 import { numberedObject } from '@/utils';
 
 import {
+  audioMixersAutomix,
   audioMixersAutomixGetHandlers,
   audioMixersAutomixSetHandlers,
 } from './automix';
 import {
+  audioMixersCleanfeeds,
   audioMixersCleanfeedsGetHandlers,
   audioMixersCleanfeedsSetHandlers,
 } from './cleanfeeds';
 import {
+  audioMixersFadersFader,
   audioMixersFadersFaderGetHandlers,
   audioMixersFadersFaderSetHandlers,
 } from './faders';
 import {
   audioMixersMutegroupsGetHandlers,
+  audioMixersMutegroupsMutegroup,
 } from './mutegroups';
 import {
+  audioMixersOptions,
   audioMixersOptionsGetHandlers,
   audioMixersOptionsSetHandlers,
 } from './options';
-import { audioMixersSourcelistGetHandlers } from './sourcelist';
+import {
+  audioMixersSourcelist,
+  audioMixersSourcelistGetHandlers,
+} from './sourcelist';
 
 const audioMixersMixerImmutable = z.object({
   _lastloadedsnap: z.string(),
+  automix: numberedObject(audioMixersAutomix),
+  cleanfeeds: numberedObject(audioMixersCleanfeeds),
+  faders: numberedObject(audioMixersFadersFader),
+  mutegroups: numberedObject(audioMixersMutegroupsMutegroup),
+  options: audioMixersOptions,
+  sourcelist: audioMixersSourcelist,
 });
 
 const audioMixersMixer = audioMixersMixerImmutable;

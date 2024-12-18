@@ -15,7 +15,7 @@ const audioMixersCleanfeedsMutable = z.object({
   srcsel: z.number(),
 });
 
-const audioMixersCleanfeeds = audioMixersCleanfeedsImmutable.merge(
+export const audioMixersCleanfeeds = audioMixersCleanfeedsImmutable.merge(
   audioMixersCleanfeedsMutable,
 );
 

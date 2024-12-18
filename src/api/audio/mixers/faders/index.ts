@@ -50,7 +50,7 @@ const audioMixersFadersFaderMutable = z.object({
   mutegroups: numberedObject(audioMixersFadersFaderMutegroupsMutegroup),
 });
 
-const audioMixersFadersFader = audioMixersFadersFaderImmutable.merge(
+export const audioMixersFadersFader = audioMixersFadersFaderImmutable.merge(
   audioMixersFadersFaderMutable,
 );
 

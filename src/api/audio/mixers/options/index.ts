@@ -22,7 +22,7 @@ const audioMixersOptionsMutable = z.object({
   directoffair: z.boolean(),
 });
 
-const audioMixersOptions = audioMixersOptionsImmutable.merge(
+export const audioMixersOptions = audioMixersOptionsImmutable.merge(
   audioMixersOptionsMutable,
 );
 
