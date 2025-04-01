@@ -513,11 +513,22 @@ export class DHD {
       });
 
       if (!response.ok) {
-        // TODO: Handle error and emit via handler
-        log.error('Failed to fetch data');
-        log.error(response.statusText);
+        if (response.status === 503) {
+          // Rate limit exceeded
+          log.error('DHD responded with 503 Service Unavailable');
+          log.error('Probably exceeded rate limit. Max 1 request per second');
+          log.error(
+            'See https://developer.dhd.audio/docs/API/control-api/rest-usage#rate-limiting for more information',
+          );
 
-        return;
+          throw new Error('Rate limit exceeded');
+        } else {
+          // TODO: Handle error and emit via handler
+          log.error('Failed to fetch data');
+          log.error(response.statusText);
+
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
       }
 
       const json = await response.json();
