@@ -3,7 +3,7 @@ import { z } from 'zod';
 const dhdWebSocketAuthResponse = z.object({
   msgID: z.string(),
   method: z.literal('auth'),
-  token: z.string(),
+  success: z.boolean(),
 });
 
 const dhdWebSocketBaseResponse = <Method extends 'get' | 'set'>(
