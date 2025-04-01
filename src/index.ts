@@ -162,7 +162,7 @@ export class DHD {
     }
 
     const protocol = this.options.secure ? 'wss' : 'ws';
-    const url = new URL('/api/ws', `${protocol}://${this.options.host}:8080`);
+    const url = new URL('/api/ws', `${protocol}://${this.options.host}`);
 
     this.socket = new WebSocket(url);
 
