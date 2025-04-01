@@ -240,19 +240,29 @@ export class DHD {
 
   private handleMessage = ({ data }: MessageEvent) => {
     try {
-      const message = dhdWebSocketResponse.parse(JSON.parse(data));
+      log.debug('Received message from WebSocket', data);
+
+      const parsedMessage = dhdWebSocketResponse.safeParse(JSON.parse(data));
+
+      if (!parsedMessage.success) {
+        log.error('Failed to parse message from DHD WebSocket');
+        log.error(parsedMessage.error.issues.flat());
+
+        return;
+      }
+
+      const message = parsedMessage.data;
 
       switch (message.method) {
         case 'auth': {
           if (message.success) {
             log.info('Successfully authenticated on WebSocket');
+            this.emit('authenticated');
           } else {
             log.error('Failed to authenticate on WebSocket');
           }
 
           this.requestMap.delete(message.msgID);
-
-          this.emit('authenticated');
 
           break;
         }
@@ -263,7 +273,13 @@ export class DHD {
             const promise = this.requestMap.get(message.msgID);
 
             if (message.success !== true) {
+              log.error('Received error from DHD device');
+              log.error(
+                `Code ${message.error?.code ?? 'Unknown'} ${message.error?.message ?? ''}`.trim(),
+              );
+
               promise?.reject(
+                // TODO: Create own error class for DHD errors
                 new Error(message.error?.message ?? 'Unknown error'),
               );
             } else {
