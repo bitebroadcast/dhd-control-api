@@ -253,7 +253,7 @@ export class DHD {
                 new Error(message.error?.message ?? 'Unknown error'),
               );
             } else {
-              promise?.resolve(message);
+              promise?.resolve(message.payload);
             }
 
             this.requestMap.delete(message.msgID);
