@@ -490,9 +490,10 @@ export class DHD {
     try {
       const protocol = this.options.secure ? 'https' : 'http';
       const url = new URL(
-        `/api/rest`,
-        `${protocol}://${this.options.host}:3000`,
+        `/api/rest${requestPayload.path}`,
+        `${protocol}://${this.options.host}`,
       );
+      url.searchParams.set('token', this.options.token);
 
       const response = await fetch(url.toString(), {
         method: 'POST',
@@ -513,7 +514,7 @@ export class DHD {
 
       const json = await response.json();
 
-      return json;
+      return json.payload;
     } catch (error) {
       log.error('Failed to fetch data');
       log.error(error);
