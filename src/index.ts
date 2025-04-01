@@ -444,6 +444,7 @@ export class DHD {
 
       this.requestMap.set(msgID, { resolve, reject });
 
+      // TODO: Implement queue for requests if socket is not open
       if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
         log.error('WebSocket connection is not open');
 
