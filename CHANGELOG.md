@@ -1,5 +1,11 @@
 # dhd-control-api
 
+## 0.4.0
+
+### Minor Changes
+
+- be1c2ad: Improved API and WebSocket handling with enhanced error management, token validation and events
+
 ## 0.3.0
 
 ### Minor Changes
