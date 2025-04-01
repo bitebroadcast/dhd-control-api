@@ -72,6 +72,7 @@ type DHDEvents = {
   error: (error: Error) => void;
   reconnect: () => void;
   authenticated: () => void;
+  ready: () => void;
 };
 
 export class DHD {
@@ -93,6 +94,12 @@ export class DHD {
 
     if (this.options.autoConnect !== false) {
       this.connect();
+    }
+
+    if (this.options.connectionType === 'rest') {
+      // setTimeout is used to ensure that the event is emitted after the
+      // constructor has finished executing.
+      setTimeout(() => this.emit('ready'), 0);
     }
   }
 
@@ -262,6 +269,7 @@ export class DHD {
           if (message.success) {
             log.info('Successfully authenticated on WebSocket');
             this.emit('authenticated');
+            this.emit('ready');
           } else {
             log.error('Failed to authenticate on WebSocket');
           }
