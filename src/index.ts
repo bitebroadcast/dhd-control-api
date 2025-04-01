@@ -25,7 +25,11 @@ const dhdOptionsSchema = z.object({
   /**
    * The token used to authenticate with the DHD device.
    */
-  token: z.string(),
+  token: z
+    .string()
+    .regex(/^[0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{8}$/i, {
+      message: 'Invalid token format',
+    }),
 
   /**
    * The type of connection to use when connecting to the DHD device. Please
