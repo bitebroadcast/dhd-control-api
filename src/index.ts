@@ -67,6 +67,7 @@ type DHDEvents = {
   disconnect: () => void;
   error: (error: Error) => void;
   reconnect: () => void;
+  authenticated: () => void;
 };
 
 export class DHD {
@@ -242,13 +243,26 @@ export class DHD {
       const message = dhdWebSocketResponse.parse(JSON.parse(data));
 
       switch (message.method) {
-        case 'auth':
+        case 'auth': {
+          if (message.success) {
+            log.info('Successfully authenticated on WebSocket');
+          } else {
+            log.error('Failed to authenticate on WebSocket');
+          }
+
+          this.requestMap.delete(message.msgID);
+
+          this.emit('authenticated');
+
+          break;
+        }
+
         case 'get':
         case 'set': {
           if (this.requestMap.has(message.msgID)) {
             const promise = this.requestMap.get(message.msgID);
 
-            if (message.method !== 'auth' && message.success !== true) {
+            if (message.success !== true) {
               promise?.reject(
                 new Error(message.error?.message ?? 'Unknown error'),
               );
